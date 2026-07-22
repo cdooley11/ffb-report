@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Football Franchise Player Transition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.4;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .year-section {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .year-section h2 {
+            color: #1e3c72;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .year-badge {
+            background: #667eea;
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 0.85em;
+        }
+
+        .year-section ul {
+            list-style: none;
+            margin-left: 10px;
+        }
+
+        .year-section li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95em;
+        }
+
+        .year-section li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .example {
+            background: #e7f3ff;
+            border-left: 3px solid #2196F3;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-style: italic;
+            color: #0d47a1;
+            font-size: 0.9em;
+        }
+
+        .years-grid {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .rules-section {
+            grid-column: 1 / -1;
+            border-top: 3px solid #667eea;
+            padding-top: 15px;
+        }
+
+        .rules-section h2 {
+            color: #1e3c72;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .rule-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .rule-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .rule-card h3 {
+            color: #667eea;
+            margin-bottom: 6px;
+            font-size: 1em;
+        }
+
+        .rule-card p {
+            color: #555;
+            line-height: 1.5;
+            font-size: 0.9em;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: #856404;
+        }
+
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px 15px;
+            border-radius: 4px;
+            grid-column: 1 / -1;
+        }
+
+        .warning strong {
+            color: #e65100;
+            font-size: 1em;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #e0e0e0;
+            font-style: italic;
+            font-size: 0.85em;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .rule-card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏈 Fantasy Football Franchise Player Transition</h1>
+            <p>New Format Starting 2026</p>
+        </div>
+
+        <div class="content">
+            <div class="years-grid">
+                <div class="year-section">
+                    <h2><span class="year-badge">2026</span>Transition Year</h2>
+                    <ul>
+                        <li>Keep <strong>2 keepers</strong> at bottom of draft</li>
+                        <li>Keep <strong>1 keeper</strong> at previous year draft pick + 1 round (closest pick available)</li>
+                    </ul>
+                    <div class="example">
+                        Example: Draft in 6th round → Keep in 5th round next year. No 5th round pick? Use 4th round.
+                    </div>
+                </div>
+
+                <div class="year-section">
+                    <h2><span class="year-badge">2027+</span>Franchise Player Format</h2>
+                    <ul>
+                        <li>Keep <strong>1 player</strong> at bottom of the draft</li>
+                        <li>Keep <strong>2 keepers</strong> at n+1 round available</li>
+                    </ul>
+                    <div class="example">
+                        Example: Your two keepers advance one round earlier each year (6th → 5th → 4th), while your franchise player is always kept at the bottom of the draft.
+                    </div>
+                </div>
+            </div>
+
+            <div class="rules-section">
+                <h2>📋 Additional Rules to Be Aware of Pre-Draft</h2>
+
+                <div class="rules-grid">
+                <div class="rule-card">
+                    <h3>First Round Pick Restriction</h3>
+                    <p><span class="highlight">1st round picks cannot be kept.</span> However, 2nd round picks can be kept in the 1st round the following year, but will not qualify for a keeper after that.</p>
+                    <div class="example">
+                        Exception: One player from the bottom-of-draft keepers in 2026 may be kept as a 1st round pick in 2027 only (counts as one of your keepers in the draft), then must be released to the draft in 2028.
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Traded Draft Picks</h3>
+                    <p>If you do not have a 1st round pick (traded away), you cannot keep that player who qualifies for that round of keeper (previous year kept in 2nd round or previous year drafted in 2nd round).</p>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Multi-Year Keeper Progression</h3>
+                    <p>If you keep a player in the 5th round, you can keep them the following year at 4th round, then the following year in 3rd round, and so on.</p>
+                    <div class="example">
+                        Example: Draft in 6th → Keep in 5th → Keep in 4th → Keep in 3rd (and so on)
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Missing Draft Pick Scenario</h3>
+                    <p>If you draft someone in the 6th round and do not have a 5th round pick the following year, it would be a 4th round keeper.</p>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Free Agent Pickups</h3>
+                    <p>Free agent pickups will be kept in the <span class="highlight">7th round</span> the following year.</p>
+                    <div class="example">
+                        Example: If you want to keep a free agent and a player drafted in 8th round, it will use your 7th round pick & 6th round pick to keep both of those players.
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Traded Players</h3>
+                    <p>If you trade for a player drafted in round X, you will keep them the following year in round X+1.</p>
+                    <div class="example">
+                        Example: I trade for a player who was drafted in the 5th round. The following year I keep them in the 4th round (or next available round if 4th round pick is not owned).
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Drop and Re-Add (Same Team)</h3>
+                    <p>If you draft a player in the 5th round, drop them, and pick them back up, you do <strong>NOT</strong> keep them in the 7th round. You keep them in the 4th round the following year (still follows n+1 rule).</p>
+                    <div class="example">
+                        Same rule applies if you drop a 10th round pick and pick him back up. He is a 9th round keeper the following year.
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Drop and Pick Up (Different Team)</h3>
+                    <p>If a player was drafted in the 3rd round and dropped, then picked up by another team, they are now a <span class="highlight">7th round keeper</span> the following year (free agent rule applies).</p>
+                </div>
+
+                <div class="rule-card">
+                    <h3>Optional Keepers</h3>
+                    <p>You are <strong>NOT required</strong> to keep any players if you do not have good value in the draft.</p>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Stay informed. Know your keepers. Dominate your league.</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Questions? Complaints? Send them directly to the commissioner's spam folder.</p>
+        </div>
+    </div>
+</body>
+</html>
