@@ -263,7 +263,7 @@
     <span class="legend-chip normal">Round X — drafted/traded progression (n−1)</span>
     <span class="legend-chip fa">Round 7 (FA) — free agent or different-team pickup</span>
     <span class="legend-chip round1">Round 1 ⚠️ — last year as a regular keeper</span>
-    <span class="legend-chip transition">Franchise / Round 1 — transition year (drafted Rd 12–13)</span>
+    <span class="legend-chip transition">Franchise / Round 1 — transition year (drafted Rd 13–14)</span>
     <span class="legend-chip franchise">🔒 Franchise Only — must be kept at bottom of draft</span>
   </div>
 
@@ -366,7 +366,7 @@
     if (keeperRound <= 0)   return { text: '🔒 Franchise Only',     cls: 'franchise'  };
     if (keeperRound === 1)  return { text: 'Round 1 ⚠️',            cls: 'round1'     };
     if (isFa)               return { text: `Round ${keeperRound} (FA)`, cls: 'fa'     };
-    if (draftRound >= 12)   return { text: 'Franchise / Round 1',   cls: 'transition' };
+    if (draftRound >= 13)   return { text: 'Franchise / Round 1',   cls: 'transition' };
     return                         { text: `Round ${keeperRound}`,  cls: 'normal'     };
   }
 

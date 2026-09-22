@@ -123,7 +123,7 @@
   /* ---- HONOR CARDS ---- */
   .honors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
     margin-bottom: 2.5rem;
   }
@@ -155,7 +155,7 @@
   /* photo area */
   .photo-upload-area {
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 2 / 3;
     border-radius: 6px;
     border: 2px solid rgba(240,192,48,0.4);
     overflow: hidden;
@@ -204,7 +204,7 @@
   .weeks-section { margin-bottom: 2.5rem; }
   .weeks-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 0.75rem;
   }
   .week-card {
@@ -229,10 +229,10 @@
     align-self: flex-start;
   }
 
-  /* week photo area — portrait-ish ratio */
+  /* week photo area */
   .week-photo-area {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3 / 5;
     border-radius: 5px;
     border: 2px solid rgba(240,192,48,0.4);
     overflow: hidden;
@@ -559,12 +559,12 @@
     { icon: '🏆', label: '2025 Champion',        cls: 'card-champion', labelCls: 'gold',   name: 'Zach Akins', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/zach1.JPG' },
     { icon: '🍺🏃', label: '2025 Beer Mile',      cls: 'card-loser',    labelCls: 'red',    name: 'Ryan Bailey', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/bailey1.JPG' },
     { icon: '🏆', label: '2024 Champion',         cls: 'card-champion',      labelCls: 'gold',   name: 'Erik Hermansen', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/Erik2024.png' },
-    { icon: '🏆', label: '2023 Champion',        cls: 'card-champion',      labelCls: 'silver', name: 'Steve Carroll', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/Steve2023.png' },
+    { icon: '🏆', label: '2023 Champion',        cls: 'card-champion',      labelCls: 'silver', name: 'Steve Carroll', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/Steve2023.PNG' },
     { icon: '🏆', label: '2022 Champion',        cls: 'card-champion',      labelCls: 'bronze', name: 'Steve Carroll', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/Steve2022.JPG' },
     { icon: '🏆', label: '2021 Champion',           cls: 'card-champion',   labelCls: 'green',  name: 'Ryan Bailey', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/Bailey2021.png' },
     { icon: '🏆', label: '2020 Champion', cls: 'card-champion', labelCls: 'blue',   name: 'Erik Hermansen', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/Erik2020.png' },
     { icon: '🏆', label: '2019 Champion', cls: 'card-champion', labelCls: 'blue',   name: 'Zach Akins', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/zach2019.JPG' },
-    { icon: '🏆', label: '2018 Champion', cls: 'card-champion', labelCls: 'blue',   name: 'Commish', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/commish2018.JPG' },
+    { icon: '🏆', label: '2018 Champion', cls: 'card-champion', labelCls: 'blue',   name: 'Commish', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/commish2018.jpg' },
   ];
 
 
@@ -593,9 +593,9 @@
   const beerMile = [
     { year: '2018', name: 'Ryan Bailey', time: '~12 min (PUKED)', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/baileybeermile.png' },
     { year: '2019', name: 'Alec Todryk', time: '9 min 44 sec', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/alecbeermile.png' },
-    { year: '2020', name: 'Spencer Barrett', time: '~13 min', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/spencer1.png' },
+    { year: '2020', name: 'Spencer Barrett', time: '~13 min', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/spencerbeermile.JPG' },
     { year: '2021', name: 'Joe Higgins', time: 'QUITTER', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/crybaby.jpg' },
-    { year: '2022', name: 'Stock', time: '15 min 25 sec', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/stonksbeermile.jpg' },
+    { year: '2022', name: 'Stock', time: '15 min 25 sec', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/stonkbeermile.JPG' },
     { year: '2023', name: 'Don Heimer', time: '👑8 min 58 sec👑', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/donbeermile.png' },
     { year: '2024', name: 'Ben Peters', time: 'DOCTOR SAID QUIT', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/quitter.jpg' },
     { year: '2025', name: 'Ryan Bailey', time: 'CURSED', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/bailey1.JPG' },
