@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fantasy Football League</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark: #1a3a1a;
+    --green-mid: #2d5a27;
+    --green-field: #3a7d32;
+    --green-light: #4e9e44;
+    --gold: #f0c030;
+    --gold-dark: #b8931a;
+    --silver: #c0c8d0;
+    --bronze: #cd7f32;
+    --white: #f5f5f0;
+    --card-bg: rgba(10,30,10,0.72);
+    --card-border: rgba(255,255,255,0.13);
+    --red-loss: #c0392b;
+    --blue-accent: #2980b9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--green-dark);
+    color: var(--white);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent calc(10% - 1px),
+        rgba(255,255,255,0.09) calc(10% - 1px),
+        rgba(255,255,255,0.09) 10%
+      ),
+      repeating-linear-gradient(
+        180deg,
+        transparent,
+        transparent calc(8% - 1px),
+        rgba(255,255,255,0.05) calc(8% - 1px),
+        rgba(255,255,255,0.05) 8%
+      ),
+      linear-gradient(160deg, #1a3a1a 0%, #2d5a27 40%, #1e4a1e 70%, #152a15 100%);
+    background-attachment: fixed;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  header::before {
+    content: '';
+    display: block;
+    width: 90%;
+    max-width: 900px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 1.5rem;
+  }
+  .league-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    text-shadow: 0 2px 18px rgba(0,0,0,0.7), 0 0 40px rgba(240,192,48,0.25);
+    line-height: 1;
+  }
+  .league-season {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--silver);
+    letter-spacing: 0.2em;
+    margin-top: 0.5rem;
+  }
+  header::after {
+    content: '🏈';
+    font-size: 2rem;
+    display: block;
+    margin-top: 0.75rem;
+  }
+
+  /* ---- SECTION TITLES ---- */
+  .section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(240,192,48,0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ---- MAIN ---- */
+  main {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
+  }
+
+  /* ---- HONOR CARDS ---- */
+  .honors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .honor-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1rem;
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    transition: border-color 0.2s;
+    text-align: center;
+  }
+  .honor-card:hover { border-color: rgba(240,192,48,0.4); }
+
+  .honor-icon { font-size: 1.5rem; line-height: 1; }
+  .honor-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    color: var(--silver);
+    text-transform: uppercase;
+  }
+
+  /* photo area */
+  .photo-upload-area {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    border: 2px solid rgba(240,192,48,0.4);
+    overflow: hidden;
+    position: relative;
+    background: rgba(0,0,0,0.25);
+  }
+  .photo-upload-area img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .honor-team-label {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 4px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.35rem 0.5rem;
+    width: 100%;
+    display: block;
+    text-align: center;
+  }
+
+  .honor-team-label.gold   { color: var(--gold); }
+  .honor-team-label.silver { color: var(--silver); }
+  .honor-team-label.bronze { color: var(--bronze); }
+  .honor-team-label.red    { color: #e74c3c; }
+  .honor-team-label.green  { color: #58d68d; }
+  .honor-team-label.blue   { color: #5dade2; }
+
+  /* card left-border accents */
+  .card-champion { border-left: 3px solid var(--gold); }
+  .card-loser    { border-left: 3px solid var(--red-loss); }
+  .card-1st      { border-left: 3px solid var(--gold); }
+  .card-2nd      { border-left: 3px solid var(--silver); }
+  .card-3rd      { border-left: 3px solid var(--bronze); }
+  .card-record   { border-left: 3px solid var(--green-light); }
+  .card-vs-all   { border-left: 3px solid var(--blue-accent); }
+
+  /* ---- WEEKLY PAYOUTS ---- */
+  .weeks-section { margin-bottom: 2.5rem; }
+  .weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 0.75rem;
+  }
+  .week-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 0.85rem 0.75rem;
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: border-color 0.2s;
+  }
+  .week-card:hover { border-color: rgba(240,192,48,0.35); }
+  .week-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    align-self: flex-start;
+  }
+
+  /* week photo area — portrait-ish ratio */
+  .week-photo-area {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 5px;
+    border: 2px solid rgba(240,192,48,0.4);
+    overflow: hidden;
+    position: relative;
+    background: rgba(0,0,0,0.2);
+  }
+  .week-photo-area img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+  }
+
+  .week-name-label {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.28rem 0.4rem;
+    width: 100%;
+    display: block;
+    text-align: center;
+  }
+
+  /* ---- STANDINGS SECTION ---- */
+  .standings-section { margin-bottom: 2.5rem; }
+  .standings-wrap {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--blue-accent);
+    border-radius: 6px;
+    padding: 1.25rem 1.25rem 1rem;
+    backdrop-filter: blur(6px);
+    overflow-x: auto;
+  }
+  .standings-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .standings-wrap thead th {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid rgba(240,192,48,0.25);
+    text-align: left;
+  }
+  .standings-wrap thead th.center { text-align: center; }
+  .standings-wrap tbody td {
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: var(--white);
+    vertical-align: middle;
+  }
+  .standings-wrap tbody tr:last-child td { border-bottom: none; }
+  .standings-wrap tbody tr:hover td { background: rgba(255,255,255,0.04); }
+  .standings-wrap .rank-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--silver);
+    width: 32px;
+    text-align: center;
+  }
+  .standings-wrap .s-name {
+    background: transparent;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    display: inline-block;
+    width: 100%;
+    min-width: 140px;
+    padding: 0.1rem 0.2rem;
+  }
+  .standings-wrap .s-wl {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 3px;
+    color: var(--white);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    display: inline-block;
+    width: 48px;
+    text-align: center;
+    padding: 0.2rem 0.25rem;
+  }
+  .standings-wrap td.center { text-align: center; }
+
+  /* ---- TABS ---- */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid rgba(240,192,48,0.3);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    color: var(--silver);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: var(--white); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.08em;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="league-name">Boys Club Fantasy Football League</div>
+  <div class="league-season">created by your loving commish</div>
+</header>
+
+<main>
+
+  <!-- ===== TAB NAV ===== -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="glory">🏆 Hall of Glory</button>
+    <button class="tab-btn" data-tab="standings">⚔️ 2026 Best Record vs All</button>
+    <button class="tab-btn" data-tab="weekly">💵 2026 Weekly High</button>
+  </nav>
+
+  <!-- ===== HALL OF GLORY ===== -->
+  <div class="tab-panel active" id="tab-glory">
+    <div class="section-title">🏆 Hall of Glory</div>
+    <div class="honors-grid" id="honors-grid"></div>
+  </div>
+
+  <!-- ===== BEST RECORD VS ALL STANDINGS ===== -->
+  <div class="tab-panel" id="tab-standings">
+    <div class="standings-section">
+      <div class="section-title">⚔️ 2026 Best Record vs All — Current Standings</div>
+      <div class="standings-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="center">#</th>
+              <th>Team</th>
+              <th class="center">W</th>
+              <th class="center">L</th>
+            </tr>
+          </thead>
+          <tbody id="vsall-standings"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WEEKLY PAYOUTS ===== -->
+  <div class="tab-panel" id="tab-weekly">
+    <div class="weeks-section">
+      <div class="section-title">💵 Weekly High-Score Payouts — Weeks 1–17</div>
+      <div class="weeks-grid" id="weeks-grid"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>Fantasy Football League &nbsp;·&nbsp; 2024 Season</footer>
+
+<script>
+  // ================================================================
+  // EDIT YOUR DATA HERE — each entry is its own slot
+  // ================================================================
+
+  // Hall of Glory cards — name and image per award (7 total)
+  const honors = [
+    { icon: '🏆', label: '2025 Champion',        cls: 'card-champion', labelCls: 'gold',   name: 'Zach Akins', img: 'ffb-report/zach1.JPG' },
+    { icon: '🍺🏃', label: '2025 Beer Mile',      cls: 'card-loser',    labelCls: 'red',    name: 'Ryan Bailey', img: 'ffb-report/bailey1.JPG' },
+    { icon: '🥇', label: '2026 Champion',         cls: 'card-1st',      labelCls: 'gold',   name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' },
+    { icon: '🥈', label: '2026 2nd Place',        cls: 'card-2nd',      labelCls: 'silver', name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' },
+    { icon: '🥉', label: '2026 3rd Place',        cls: 'card-3rd',      labelCls: 'bronze', name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' },
+    { icon: '📊', label: '2026 1 Seed',           cls: 'card-record',   labelCls: 'green',  name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' },
+    { icon: '⚔️', label: '2026 Best Record vs All', cls: 'card-vs-all', labelCls: 'blue',   name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' },
+  ];
+
+  // Standings — name, wins, losses per rank (12 total)
+  const standings = [
+    { name: 'Make Love Great Again', w: 11, l: 0 }, // Rank 1
+    { name: 'GreekGods', w: 10, l: 1 }, // Rank 2
+    { name: 'Skatteboob', w: 9, l: 2 }, // Rank 3
+    { name: 'White Lightning', w: 8, l: 3 }, // Rank 4
+    { name: 'The Mahomosexuals', w: 7, l: 4 }, // Rank 5
+    { name: 'Suck my Kraft', w: 6, l: 5 }, // Rank 6
+    { name: 'Kittle me Softly', w: 5, l: 6 }, // Rank 7
+    { name: 'Puka NaChewyas', w: 4, l: 7 }, // Rank 8
+    { name: 'One Pump Chump', w: 3, l: 8 }, // Rank 9
+    { name: 'Mr. McGIBBlets', w: 2, l: 9 }, // Rank 10
+    { name: 'Here lies Nabers Wk 1-4💐', w: 1, l: 10 }, // Rank 11
+    { name: 'Long Achane, Fast Johnson', w: 0, l: 11 }, // Rank 12
+  ];
+
+  // Weekly winners — name and image per week (17 total)
+  const weeks = [
+    { name: 'Alec T', img: 'ffb-report/alec1.png' }, // Week 1
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 2
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 3
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 4
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 5
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 6
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 7
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 8
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 9
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 10
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 11
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 12
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 13
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 14
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 15
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 16
+    { name: 'Sydney Sweeny 🤤', img: 'ffb-report/sydneyjpg.jpg' }, // Week 17
+  ];
+
+  // ================================================================
+
+  // ---- Hall of Glory ----
+  const honorsGrid = document.getElementById('honors-grid');
+  honors.forEach(h => {
+    const card = document.createElement('div');
+    card.className = `honor-card ${h.cls}`;
+    card.innerHTML = `
+      <span class="honor-icon">${h.icon}</span>
+      <span class="honor-label">${h.label}</span>
+      <div class="photo-upload-area">
+        <img alt="Photo" src="${h.img}">
+      </div>
+      <span class="honor-team-label ${h.labelCls}">${h.name}</span>
+    `;
+    honorsGrid.appendChild(card);
+  });
+
+  // ---- Best Record vs All Standings ----
+  const vsallTbody = document.getElementById('vsall-standings');
+  standings.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rank-num">${i + 1}</td>
+      <td><span class="s-name">${s.name}</span></td>
+      <td class="center"><span class="s-wl">${s.w}</span></td>
+      <td class="center"><span class="s-wl">${s.l}</span></td>
+    `;
+    vsallTbody.appendChild(tr);
+  });
+
+  // ---- Weekly Payouts ----
+  const weeksGrid = document.getElementById('weeks-grid');
+  weeks.forEach((wk, i) => {
+    const card = document.createElement('div');
+    card.className = 'week-card';
+    card.innerHTML = `
+      <div class="week-num">Week ${i + 1}</div>
+      <div class="week-photo-area">
+        <img alt="Week ${i + 1} winner photo" src="${wk.img}">
+      </div>
+      <span class="week-name-label">${wk.name}</span>
+    `;
+    weeksGrid.appendChild(card);
+  });
+
+  // ---- Tab switching ----
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
