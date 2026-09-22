@@ -79,6 +79,17 @@
     letter-spacing: 0.2em;
     margin-top: 0.5rem;
   }
+  .league-tagline {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--silver);
+    letter-spacing: 0.08em;
+    margin-top: 0.75rem;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(240,192,48,0.5);
+  }
   header::after {
     content: '🏈';
     font-size: 2rem;
@@ -320,6 +331,58 @@
   }
   .standings-wrap td.center { text-align: center; }
 
+  /* ---- PAYOUT BREAKDOWN ---- */
+  .payout-section {
+    margin-bottom: 2rem;
+  }
+  .payout-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--gold);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    backdrop-filter: blur(6px);
+    max-width: 480px;
+  }
+  .payout-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.9rem;
+  }
+  .payout-row:last-child { border-bottom: none; }
+  .payout-row .payout-label { color: var(--silver); }
+  .payout-row .payout-amount {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .payout-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid rgba(240,192,48,0.4);
+  }
+  .payout-total .payout-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .payout-total .payout-amount {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
   /* ---- TABS ---- */
   .tab-nav {
     display: flex;
@@ -348,6 +411,56 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
+  /* ---- SITE NAV ---- */
+  .site-nav {
+    background: rgba(10,25,10,0.95);
+    border-bottom: 2px solid rgba(240,192,48,0.25);
+    padding: 0.65rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  .site-nav-brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .site-nav-links { display: flex; gap: 0.15rem; flex-wrap: wrap; align-items: center; }
+  .site-nav-links a {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem 0.2rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s;
+  }
+  .site-nav-links a:hover { color: var(--white); }
+  .site-nav-links a.active { color: var(--gold); border-bottom-color: rgba(240,192,48,0.7); }
+
+  /* ---- BEER MILE TIME ---- */
+  .beermile-time {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-align: center;
+    display: block;
+    width: 100%;
+  }
+
   /* ---- FOOTER ---- */
   footer {
     text-align: center;
@@ -361,9 +474,21 @@
 </head>
 <body>
 
+<nav class="site-nav">
+  <a class="site-nav-brand" href="index.html">🏈 Boys Club FFL</a>
+  <div class="site-nav-links">
+    <a href="index.html">Home</a>
+    <a href="CommishNote.html" class="active">Commish Note</a>
+    <a href="dashboard.html">Transactions</a>
+    <a href="Fantasy-Football-Keeper-Rules.html">Keeper Rules</a>
+    <a href="keeper-calculator.html">Keeper Calc</a>
+  </div>
+</nav>
+
 <header>
   <div class="league-name">Boys Club Fantasy Football League</div>
   <div class="league-season">created by your loving commish</div>
+
 </header>
 
 <main>
@@ -373,6 +498,7 @@
     <button class="tab-btn active" data-tab="glory">🏆 Hall of Glory</button>
     <button class="tab-btn" data-tab="standings">⚔️ 2026 Best Record vs All</button>
     <button class="tab-btn" data-tab="weekly">💵 2026 Weekly High</button>
+    <button class="tab-btn" data-tab="beermile">🍺 Beer Mile</button>
   </nav>
 
   <!-- ===== HALL OF GLORY ===== -->
@@ -393,6 +519,7 @@
               <th>Team</th>
               <th class="center">W</th>
               <th class="center">L</th>
+              <th class="center">PF</th>
             </tr>
           </thead>
           <tbody id="vsall-standings"></tbody>
@@ -406,6 +533,14 @@
     <div class="weeks-section">
       <div class="section-title">💵 Weekly High-Score Payouts — Weeks 1–17</div>
       <div class="weeks-grid" id="weeks-grid"></div>
+    </div>
+  </div>
+
+  <!-- ===== BEER MILE ===== -->
+  <div class="tab-panel" id="tab-beermile">
+    <div class="weeks-section">
+      <div class="section-title">🍺 Official Beer Mile Times</div>
+      <div class="weeks-grid" id="beermile-grid"></div>
     </div>
   </div>
 
@@ -429,21 +564,6 @@
     { icon: '⚔️', label: '2026 Best Record vs All', cls: 'card-vs-all', labelCls: 'blue',   name: 'Sydney Sweeny 🤤', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/sydneyjpg.jpg' },
   ];
 
-  // Standings — name, wins, losses per rank (12 total)
-  const standings = [
-    { name: 'Make Love Great Again', w: 11, l: 0 }, // Rank 1
-    { name: 'GreekGods', w: 10, l: 1 }, // Rank 2
-    { name: 'Skatteboob', w: 9, l: 2 }, // Rank 3
-    { name: 'White Lightning', w: 8, l: 3 }, // Rank 4
-    { name: 'The Mahomosexuals', w: 7, l: 4 }, // Rank 5
-    { name: 'Suck my Kraft', w: 6, l: 5 }, // Rank 6
-    { name: 'Kittle me Softly', w: 5, l: 6 }, // Rank 7
-    { name: 'Puka NaChewyas', w: 4, l: 7 }, // Rank 8
-    { name: 'One Pump Chump', w: 3, l: 8 }, // Rank 9
-    { name: 'Mr. McGIBBlets', w: 2, l: 9 }, // Rank 10
-    { name: 'Here lies Nabers Wk 1-4💐', w: 1, l: 10 }, // Rank 11
-    { name: 'Long Achane, Fast Johnson', w: 0, l: 11 }, // Rank 12
-  ];
 
   // Weekly winners — name and image per week (17 total)
   const weeks = [
@@ -466,6 +586,18 @@
     { name: 'Sydney Sweeny 🤤', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/sydneyjpg.jpg' }, // Week 17
   ];
 
+  // Beer Mile — name, time (MM:SS), and image per year 2018–2025 (8 total)
+  const beerMile = [
+    { year: '2018', name: 'Ryan Bailey', time: '~12 min (PUKED)', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/baileybeermile.png' },
+    { year: '2019', name: 'Alec Todryk', time: '9 min 44 sec', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/alecbeermile.png' },
+    { year: '2020', name: 'Spencer Barrett', time: '~13 min', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/spencer1.HEIC' },
+    { year: '2021', name: 'Joe Higgins', time: 'QUITTER', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/crybaby.jpg' },
+    { year: '2022', name: 'Stock', time: '15 min 25 sec', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/stonks.jpg' },
+    { year: '2023', name: 'Don Heimer', time: '👑8 min 58 sec👑', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/sydneyjpg.jpg' },
+    { year: '2024', name: 'Ben Peters', time: 'DOCTOR SAID QUIT', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/quitter.jpg' },
+    { year: '2025', name: 'Ryan Bailey', time: 'CURSED', img: 'https://raw.githubusercontent.com/cdooley11/ffb-report/main/bailey1.JPG' },
+  ];
+
   // ================================================================
 
   // ---- Hall of Glory ----
@@ -484,18 +616,77 @@
     honorsGrid.appendChild(card);
   });
 
-  // ---- Best Record vs All Standings ----
-  const vsallTbody = document.getElementById('vsall-standings');
-  standings.forEach((s, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="rank-num">${i + 1}</td>
-      <td><span class="s-name">${s.name}</span></td>
-      <td class="center"><span class="s-wl">${s.w}</span></td>
-      <td class="center"><span class="s-wl">${s.l}</span></td>
-    `;
-    vsallTbody.appendChild(tr);
-  });
+  // ---- Best Record vs All Standings (live from Sleeper) ----
+  async function initVsAllStandings() {
+    const tbody = document.getElementById('vsall-standings');
+    tbody.innerHTML = '<tr><td colspan="5" style="padding:1rem 0.6rem;color:var(--silver);font-family:Oswald,sans-serif;letter-spacing:0.08em;font-size:0.9rem;">⏳ Loading standings...</td></tr>';
+    try {
+      const BASE = 'https://api.sleeper.app/v1';
+      const LID  = '1385115148011716609';
+
+      const [users, rosters] = await Promise.all([
+        fetch(`${BASE}/league/${LID}/users`).then(r => r.json()),
+        fetch(`${BASE}/league/${LID}/rosters`).then(r => r.json()),
+      ]);
+
+      const userMap = Object.fromEntries(users.map(u => [u.user_id, u]));
+      const nameMap = Object.fromEntries(rosters.map(r => {
+        const u = userMap[r.owner_id] || {};
+        return [
+          r.roster_id,
+          u.metadata?.team_name || r.metadata?.team_name || u.display_name || u.username || `Roster ${r.roster_id}`,
+        ];
+      }));
+
+      const rec = {};
+      rosters.forEach(r => { rec[r.roster_id] = { w: 0, l: 0, pf: 0 }; });
+
+      const allWeeks = await Promise.all(
+        Array.from({length: 17}, (_, i) =>
+          fetch(`${BASE}/league/${LID}/matchups/${i + 1}`)
+            .then(r => r.json()).catch(() => [])
+        )
+      );
+
+      allWeeks.forEach(wk => {
+        if (!Array.isArray(wk) || !wk.length) return;
+        // Skip weeks not yet played (all scores are 0)
+        if (wk.reduce((s, m) => s + (m.points || 0), 0) === 0) return;
+
+        wk.forEach(team => {
+          wk.forEach(other => {
+            if (team.roster_id === other.roster_id) return;
+            const tp = team.points || 0, op = other.points || 0;
+            if (tp > op)      rec[team.roster_id].w++;
+            else if (tp < op) rec[team.roster_id].l++;
+            // exact tie: no change (extremely rare)
+          });
+          rec[team.roster_id].pf += team.points || 0;
+        });
+      });
+
+      const sorted = Object.entries(rec)
+        .map(([rid, r]) => ({ name: nameMap[Number(rid)] || `Roster ${rid}`, ...r }))
+        .sort((a, b) => b.w - a.w || a.l - b.l || b.pf - a.pf);
+
+      tbody.innerHTML = '';
+      sorted.forEach((team, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank-num">${i + 1}</td>
+          <td><span class="s-name">${team.name}</span></td>
+          <td class="center"><span class="s-wl">${team.w}</span></td>
+          <td class="center"><span class="s-wl">${team.l}</span></td>
+          <td class="center" style="color:var(--silver);font-size:0.82rem;font-family:'Oswald',sans-serif;">${team.pf.toFixed(1)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch(err) {
+      document.getElementById('vsall-standings').innerHTML =
+        `<tr><td colspan="5" style="padding:1rem;color:#ef9a9a;">⚠️ ${err.message}</td></tr>`;
+    }
+  }
+  initVsAllStandings();
 
   // ---- Weekly Payouts ----
   const weeksGrid = document.getElementById('weeks-grid');
@@ -512,6 +703,22 @@
     weeksGrid.appendChild(card);
   });
 
+  // ---- Beer Mile ----
+  const beerMileGrid = document.getElementById('beermile-grid');
+  beerMile.forEach(bm => {
+    const card = document.createElement('div');
+    card.className = 'week-card';
+    card.innerHTML = `
+      <div class="week-num">${bm.year}</div>
+      <div class="week-photo-area">
+        <img alt="${bm.year} Beer Mile winner" src="${bm.img}">
+      </div>
+      <span class="week-name-label">${bm.name}</span>
+      <span class="beermile-time">${bm.time}</span>
+    `;
+    beerMileGrid.appendChild(card);
+  });
+
   // ---- Tab switching ----
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -521,6 +728,16 @@
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     });
   });
+
+  // ---- Deep-link to a specific tab via URL hash (e.g. CommishNote.html#beermile) ----
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    const target = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+    if (target) {
+      target.click();
+      document.querySelector('.tab-nav').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 </script>
 </body>
 </html>

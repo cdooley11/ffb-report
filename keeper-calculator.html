@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boys Club FFL - Keeper Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark: #1a3a1a;
+    --green-mid: #2d5a27;
+    --gold: #f0c030;
+    --silver: #c0c8d0;
+    --white: #f5f5f0;
+    --card-bg: rgba(10,30,10,0.72);
+    --card-border: rgba(255,255,255,0.13);
+    --blue-accent: #2980b9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--green-dark);
+    color: var(--white);
+    min-height: 100vh;
+    padding: 20px;
+    background-image:
+      repeating-linear-gradient(90deg, transparent, transparent calc(10% - 1px), rgba(255,255,255,0.09) calc(10% - 1px), rgba(255,255,255,0.09) 10%),
+      repeating-linear-gradient(180deg, transparent, transparent calc(8% - 1px), rgba(255,255,255,0.05) calc(8% - 1px), rgba(255,255,255,0.05) 8%),
+      linear-gradient(160deg, #1a3a1a 0%, #2d5a27 40%, #1e4a1e 70%, #152a15 100%);
+    background-attachment: fixed;
+  }
+
+  .container { max-width: 1300px; margin: 0 auto; }
+
+  /* ---- SITE NAV ---- */
+  .site-nav {
+    background: rgba(10,25,10,0.95);
+    border-bottom: 2px solid rgba(240,192,48,0.25);
+    padding: 0.65rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    margin: -20px -20px 0;
+  }
+  .site-nav-brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .site-nav-links { display: flex; gap: 0.15rem; flex-wrap: wrap; align-items: center; }
+  .site-nav-links a {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem 0.2rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s;
+  }
+  .site-nav-links a:hover { color: var(--white); }
+  .site-nav-links a.active { color: var(--gold); border-bottom-color: rgba(240,192,48,0.7); }
+
+  /* ---- HEADER ---- */
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  header::before {
+    content: '';
+    display: block;
+    width: 90%;
+    max-width: 900px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 1.5rem;
+  }
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    text-shadow: 0 2px 18px rgba(0,0,0,0.7), 0 0 40px rgba(240,192,48,0.25);
+  }
+  .subtitle {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--silver);
+    letter-spacing: 0.2em;
+    margin-top: 0.5rem;
+  }
+
+  /* ---- LEGEND ---- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+    align-items: center;
+  }
+  .legend-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--silver);
+    text-transform: uppercase;
+    margin-right: 0.25rem;
+  }
+  .legend-chip {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .legend-chip.normal    { background: rgba(78,158,68,0.2);  color: #81c784; border: 1px solid rgba(129,199,132,0.3); }
+  .legend-chip.fa        { background: rgba(245,124,0,0.2);  color: #ffb74d; border: 1px solid rgba(255,183,77,0.3); }
+  .legend-chip.round1    { background: rgba(255,152,0,0.2);  color: #ffcc02; border: 1px solid rgba(255,204,2,0.4); }
+  .legend-chip.franchise { background: rgba(240,192,48,0.15); color: var(--gold); border: 1px solid rgba(240,192,48,0.4); }
+
+  /* ---- CONTROLS ---- */
+  .team-selector {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    backdrop-filter: blur(6px);
+    margin-bottom: 1.25rem;
+  }
+  .selector-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  select {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    color: var(--white);
+    cursor: pointer;
+  }
+  select:hover { border-color: rgba(240,192,48,0.5); }
+  select:focus { outline: none; border-color: var(--gold); }
+  select option { background: #1a3a1a; }
+
+  /* ---- STATUS ---- */
+  .status-msg {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--gold);
+    border-radius: 6px;
+    padding: 1.1rem 1.5rem;
+    backdrop-filter: blur(6px);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    color: var(--silver);
+    margin-bottom: 1.25rem;
+  }
+  .status-msg.error { border-left-color: #ef9a9a; color: #ef9a9a; }
+
+  /* ---- KEEPER GRID ---- */
+  .keeper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.65rem;
+  }
+  .keeper-card {
+    display: none;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem 0.75rem;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    backdrop-filter: blur(4px);
+    transition: border-color 0.2s;
+  }
+  .keeper-card.active { display: grid; }
+  .keeper-card:hover { border-color: rgba(240,192,48,0.3); }
+  .keeper-player-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--white);
+    grid-column: 1;
+  }
+  .keeper-cost {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-align: center;
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+  .keeper-cost.normal    { background: rgba(78,158,68,0.2);  color: #81c784; border: 1px solid rgba(129,199,132,0.3); }
+  .keeper-cost.fa        { background: rgba(245,124,0,0.2);  color: #ffb74d; border: 1px solid rgba(255,183,77,0.3); }
+  .keeper-cost.round1    { background: rgba(255,152,0,0.2);  color: #ffcc02; border: 1px solid rgba(255,204,2,0.4); }
+  .keeper-cost.franchise { background: rgba(240,192,48,0.15); color: var(--gold); border: 1px solid rgba(240,192,48,0.4); }
+  .keeper-player-meta { display: flex; gap: 0.3rem; flex-wrap: wrap; grid-column: 1; }
+  .keeper-badge { padding: 1px 6px; border-radius: 10px; font-size: 0.67rem; font-weight: 600; }
+  .keeper-badge.pos { background: rgba(41,128,185,0.2); border: 1px solid rgba(41,128,185,0.4); color: #7ec8e3; }
+  .keeper-badge.nfl { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: var(--silver); }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="site-nav-brand" href="index.html">🏈 Boys Club FFL</a>
+  <div class="site-nav-links">
+    <a href="index.html">Home</a>
+    <a href="CommishNote.html">Commish Note</a>
+    <a href="dashboard.html">Transactions</a>
+    <a href="Fantasy-Football-Keeper-Rules.html">Keeper Rules</a>
+    <a href="keeper-calculator.html" class="active">Keeper Calc</a>
+  </div>
+</nav>
+
+<div class="container">
+  <header>
+    <h1>🧮 2026 Keeper Calculator</h1>
+    <p class="subtitle">Live roster data — see what round each player costs to keep next year</p>
+  </header>
+
+  <div class="legend">
+    <span class="legend-label">Key:</span>
+    <span class="legend-chip normal">Round X — drafted/traded progression (n−1)</span>
+    <span class="legend-chip fa">Round 7 (FA) — free agent or different-team pickup</span>
+    <span class="legend-chip round1">Round 1 ⚠️ — last year as a regular keeper</span>
+    <span class="legend-chip franchise">🔒 Franchise Only — must be kept at bottom of draft</span>
+  </div>
+
+  <div id="status" class="status-msg">⏳ Fetching league data from Sleeper...</div>
+
+  <div id="controls" class="team-selector" style="display:none">
+    <div class="selector-label">Select Team</div>
+    <select id="teamSelect" onchange="switchTeam()">
+      <option>Loading...</option>
+    </select>
+  </div>
+
+  <div id="keeper-grid" class="keeper-grid"></div>
+</div>
+
+<script>
+  const LEAGUE_ID = '1385115148011716609';
+  const API = 'https://api.sleeper.app/v1';
+  const PLAYERS_CACHE_KEY = 'sleeper_players_v2';
+  const PLAYERS_CACHE_TS  = 'sleeper_players_ts_v2';
+  const CACHE_TTL = 86400000;
+
+  let playersDB = {};
+  let rosterUserMap = {};
+  let playerEvents = {};
+
+  function setStatus(msg, isError = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = 'status-msg' + (isError ? ' error' : '');
+    el.style.display = '';
+  }
+  function hideStatus() { document.getElementById('status').style.display = 'none'; }
+
+  async function fetchJson(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+
+  async function getPlayers() {
+    const cached = localStorage.getItem(PLAYERS_CACHE_KEY);
+    const ts = localStorage.getItem(PLAYERS_CACHE_TS);
+    if (cached && ts && Date.now() - Number(ts) < CACHE_TTL) return JSON.parse(cached);
+    setStatus('⏳ Downloading player database (one-time, ~5 MB)...');
+    const data = await fetchJson(`${API}/players/nfl`);
+    try {
+      localStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(PLAYERS_CACHE_TS, String(Date.now()));
+    } catch (_) {}
+    return data;
+  }
+
+  function addEvent(playerId, week, type, extra) {
+    if (!playerEvents[playerId]) playerEvents[playerId] = [];
+    playerEvents[playerId].push({ week, type, ...extra });
+  }
+
+  // Returns { keeperRound, isFa }
+  // keeperRound: the round the player costs to keep next year
+  // isFa: true if that round came from the FA rule (not draft progression)
+  function computeKeeperInfo(playerId) {
+    const events = (playerEvents[playerId] || []).slice().sort((a, b) => a.week - b.week);
+
+    let draftRound = null;   // current basis round (null = no draft event found yet)
+    let isFaRule   = false;  // whether the current basis is from FA rule
+    let lastDroppedBy = null;
+
+    for (const ev of events) {
+      if (ev.type === 'DRAFTED') {
+        draftRound = ev.round;
+        isFaRule   = false;
+        lastDroppedBy = null;
+      } else if (ev.type === 'DROP') {
+        lastDroppedBy = ev.roster_id;
+      } else if (ev.type === 'WAIVER' || ev.type === 'FA') {
+        if (lastDroppedBy !== null && lastDroppedBy === ev.roster_id) {
+          // Same-team re-add: preserve existing basis
+        } else {
+          // Different team (or never appeared in transactions before): FA rule
+          draftRound = null;
+          isFaRule   = true;
+        }
+        lastDroppedBy = null;
+      } else if (ev.type === 'TRADE') {
+        // Trade moves the player but preserves the draft-round basis
+        lastDroppedBy = null;
+      }
+    }
+
+    if (draftRound !== null) {
+      // Regular draft progression: next year's keeper round = draftRound - 1
+      return { keeperRound: draftRound - 1, isFa: false };
+    }
+    // FA rule: keeper round is always 7 (regardless of any prior draft round on a different team)
+    return { keeperRound: 7, isFa: true };
+  }
+
+  function keeperLabel(keeperRound, isFa) {
+    if (keeperRound <= 0) return { text: '🔒 Franchise Only', cls: 'franchise' };
+    if (keeperRound === 1) return { text: 'Round 1 ⚠️',       cls: 'round1'    };
+    if (isFa)             return { text: `Round ${keeperRound} (FA)`, cls: 'fa' };
+    return                       { text: `Round ${keeperRound}`,      cls: 'normal' };
+  }
+
+  async function init() {
+    try {
+      setStatus('⏳ Loading player database...');
+      playersDB = await getPlayers();
+
+      setStatus('⏳ Fetching league data...');
+      const [users, rosters, drafts] = await Promise.all([
+        fetchJson(`${API}/league/${LEAGUE_ID}/users`),
+        fetchJson(`${API}/league/${LEAGUE_ID}/rosters`),
+        fetchJson(`${API}/league/${LEAGUE_ID}/drafts`),
+      ]);
+
+      const userMap = Object.fromEntries(users.map(u => [u.user_id, u.display_name || u.username]));
+      rosters.forEach(r => {
+        rosterUserMap[r.roster_id] = userMap[r.owner_id] || `Roster ${r.roster_id}`;
+      });
+
+      setStatus('⏳ Fetching draft picks...');
+      for (const draft of drafts) {
+        const picks = await fetchJson(`${API}/draft/${draft.draft_id}/picks`);
+        picks.forEach(pick => {
+          if (!pick.player_id) return;
+          addEvent(pick.player_id, 0, 'DRAFTED', { round: pick.round, roster_id: pick.roster_id });
+        });
+      }
+
+      setStatus('⏳ Fetching transactions (weeks 1–18)...');
+      const txWeeks = await Promise.all(
+        Array.from({ length: 18 }, (_, i) =>
+          fetchJson(`${API}/league/${LEAGUE_ID}/transactions/${i + 1}`).catch(() => [])
+        )
+      );
+
+      txWeeks.forEach((weekTxs, idx) => {
+        const week = idx + 1;
+        if (!Array.isArray(weekTxs)) return;
+        weekTxs.forEach(tx => {
+          if (tx.status !== 'complete') return;
+          const adds  = tx.adds  || {};
+          const drops = tx.drops || {};
+
+          if (tx.type === 'trade') {
+            Object.entries(adds).forEach(([pid, toId]) => {
+              addEvent(pid, week, 'TRADE', { roster_id: toId });
+            });
+            Object.entries(drops).forEach(([pid, fromId]) => {
+              if (!adds[pid]) addEvent(pid, week, 'DROP', { roster_id: fromId });
+            });
+          } else {
+            Object.entries(adds).forEach(([pid, rosterId]) => {
+              addEvent(pid, week, tx.type === 'waiver' ? 'WAIVER' : 'FA', { roster_id: rosterId });
+            });
+            Object.entries(drops).forEach(([pid, rosterId]) => {
+              if (!adds[pid]) addEvent(pid, week, 'DROP', { roster_id: rosterId });
+            });
+          }
+        });
+      });
+
+      setStatus('⏳ Building rosters...');
+      buildUI(rosters);
+      hideStatus();
+      document.getElementById('controls').style.display = '';
+    } catch (err) {
+      setStatus(`⚠️ Error: ${err.message}`, true);
+    }
+  }
+
+  function buildUI(rosters) {
+    const select = document.getElementById('teamSelect');
+    const grid   = document.getElementById('keeper-grid');
+    select.innerHTML = '';
+    grid.innerHTML   = '';
+
+    rosters.sort((a, b) => a.roster_id - b.roster_id).forEach((roster, idx) => {
+      const name    = rosterUserMap[roster.roster_id];
+      const players = [...(roster.players || []), ...(roster.reserve || [])];
+
+      const opt = document.createElement('option');
+      opt.value = roster.roster_id;
+      opt.textContent = `${name}  (${players.length} players)`;
+      if (idx === 0) opt.selected = true;
+      select.appendChild(opt);
+
+      // Sort players: franchise first, then by round ascending
+      const sorted = players.map(pid => {
+        const { keeperRound, isFa } = computeKeeperInfo(pid);
+        return { pid, keeperRound, isFa };
+      }).sort((a, b) => {
+        if (a.keeperRound <= 0 && b.keeperRound > 0) return -1;
+        if (b.keeperRound <= 0 && a.keeperRound > 0) return  1;
+        return a.keeperRound - b.keeperRound;
+      });
+
+      sorted.forEach(({ pid, keeperRound, isFa }) => {
+        const p = playersDB[pid] || {};
+        const pName   = p.full_name || (`${p.first_name || ''} ${p.last_name || ''}`).trim() || `ID ${pid}`;
+        const pos     = p.position || '?';
+        const nflTeam = p.team || 'FA';
+        const { text, cls } = keeperLabel(keeperRound, isFa);
+
+        const card = document.createElement('div');
+        card.className   = 'keeper-card' + (idx === 0 ? ' active' : '');
+        card.dataset.roster = roster.roster_id;
+        card.innerHTML = `
+          <span class="keeper-player-name">${pName}</span>
+          <span class="keeper-cost ${cls}">${text}</span>
+          <div class="keeper-player-meta">
+            <span class="keeper-badge pos">${pos}</span>
+            <span class="keeper-badge nfl">${nflTeam}</span>
+          </div>`;
+        grid.appendChild(card);
+      });
+    });
+  }
+
+  function switchTeam() {
+    const val = document.getElementById('teamSelect').value;
+    document.querySelectorAll('.keeper-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.roster === String(val));
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>
