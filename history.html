@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boys Club FFL - League History</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark: #1a3a1a;
+    --green-mid: #2d5a27;
+    --gold: #f0c030;
+    --silver: #c0c8d0;
+    --white: #f5f5f0;
+    --card-bg: rgba(10,30,10,0.72);
+    --card-border: rgba(255,255,255,0.13);
+    --blue-accent: #2980b9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--green-dark);
+    color: var(--white);
+    min-height: 100vh;
+    padding: 20px;
+    background-image:
+      repeating-linear-gradient(90deg, transparent, transparent calc(10% - 1px), rgba(255,255,255,0.09) calc(10% - 1px), rgba(255,255,255,0.09) 10%),
+      repeating-linear-gradient(180deg, transparent, transparent calc(8% - 1px), rgba(255,255,255,0.05) calc(8% - 1px), rgba(255,255,255,0.05) 8%),
+      linear-gradient(160deg, #1a3a1a 0%, #2d5a27 40%, #1e4a1e 70%, #152a15 100%);
+    background-attachment: fixed;
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* ---- SITE NAV ---- */
+  .site-nav {
+    background: rgba(10,25,10,0.95);
+    border-bottom: 2px solid rgba(240,192,48,0.25);
+    padding: 0.65rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    margin: -20px -20px 0;
+  }
+  .site-nav-brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .site-nav-links { display: flex; gap: 0.15rem; flex-wrap: wrap; align-items: center; }
+  .site-nav-links a {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem 0.2rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s;
+  }
+  .site-nav-links a:hover { color: var(--white); }
+  .site-nav-links a.active { color: var(--gold); border-bottom-color: rgba(240,192,48,0.7); }
+
+  /* ---- HEADER ---- */
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  header::before {
+    content: '';
+    display: block;
+    width: 90%;
+    max-width: 900px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 1.5rem;
+  }
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    text-shadow: 0 2px 18px rgba(0,0,0,0.7), 0 0 40px rgba(240,192,48,0.25);
+  }
+  .subtitle {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--silver);
+    letter-spacing: 0.2em;
+    margin-top: 0.5rem;
+  }
+
+  /* ---- TAB NAV ---- */
+  .tab-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    overflow-x: auto;
+  }
+  .tab-btn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--silver);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.6rem 1.2rem 0.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s;
+    margin-bottom: -2px;
+  }
+  .tab-btn:hover { color: var(--white); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---- TABLE SHELL ---- */
+  .table-wrap {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  th {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 0.65rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    white-space: nowrap;
+    background: rgba(0,0,0,0.2);
+  }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--white); }
+  th.sorted-asc::after  { content: ' ↑'; opacity: 0.7; }
+  th.sorted-desc::after { content: ' ↓'; opacity: 0.7; }
+  td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  td.name-col {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--white);
+    min-width: 90px;
+  }
+  td.rank-col {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    color: var(--silver);
+    text-align: center;
+    width: 34px;
+  }
+  td.total-col { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 0.9rem; }
+  .pos { color: #81c784; }
+  .neg { color: #e57373; }
+  .dim { color: rgba(255,255,255,0.2); }
+  .muted { color: var(--silver); }
+
+  .section-note {
+    font-size: 0.79rem;
+    color: var(--silver);
+    margin-bottom: 1rem;
+    opacity: 0.75;
+  }
+
+  /* awards table accent cells */
+  .award-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    color: rgba(192,200,208,0.85);
+    white-space: nowrap;
+  }
+  .award-val {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .wk-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+  }
+  .wk-winner {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="site-nav-brand" href="index.html">🏈 Boys Club FFL</a>
+  <div class="site-nav-links">
+    <a href="index.html">Home</a>
+    <a href="CommishNote.html">Commish Note</a>
+    <a href="history.html" class="active">Career Earnings</a>
+    <a href="Fantasy-Football-Keeper-Rules.html">Keeper Rules</a>
+    <a href="keeper-calculator.html">2027 Keeper Calculator</a>
+    <a href="dashboard.html">Current Roster</a>
+  </div>
+</nav>
+
+<div class="container">
+  <header>
+    <h1>📊 League History</h1>
+    <p class="subtitle">Career earnings · Season awards · Weekly highs · 2018–2025</p>
+  </header>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="earnings" onclick="switchTab('earnings')">💰 Career Earnings</button>
+    <button class="tab-btn" data-tab="awards" onclick="switchTab('awards')">🏆 Season Awards</button>
+    <button class="tab-btn" data-tab="weekly" onclick="switchTab('weekly')">📅 Weekly Highs</button>
+  </div>
+
+  <!-- EARNINGS TAB -->
+  <div id="tab-earnings" class="tab-panel active">
+    <p class="section-note">Net earnings after entry fees · Default sort: all-time total · Click any column header to re-sort</p>
+    <div class="table-wrap" id="earnings-wrap"></div>
+  </div>
+
+  <!-- AWARDS TAB -->
+  <div id="tab-awards" class="tab-panel">
+    <p class="section-note">Season finishes and award winners by year</p>
+    <div class="table-wrap" id="awards-wrap"></div>
+  </div>
+
+  <!-- WEEKLY HIGHS TAB -->
+  <div id="tab-weekly" class="tab-panel">
+    <p class="section-note">Highest weekly scorer — earns a cash payout each week</p>
+    <div class="table-wrap" id="weekly-wrap"></div>
+  </div>
+</div>
+
+<script>
+  const YEARS = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+
+  const players = [
+    { name: 'Zach',     earnings: [-60, 230, -45, 45, 60, -60, 220, 225],    total: 615,  weeklyWins: 19, playoff: '11-6' },
+    { name: 'Bailey',   earnings: [-60, -75, 50, 430, 185, 120, -60, -25],   total: 565,  weeklyWins: 15, playoff: '8-5' },
+    { name: 'Steve',    earnings: [95, 155, 15, -30, 185, 200, -100, -75],   total: 445,  weeklyWins: 11, playoff: '8-4' },
+    { name: 'Erik',     earnings: [-60, -60, 460, -75, -30, -80, 220, -25],  total: 350,  weeklyWins: 15, playoff: '7-4' },
+    { name: 'David',    earnings: [-75, 80, -75, 110, -75, 220, -80, -100],  total: 5,    weeklyWins: 14, playoff: '5-6' },
+    { name: 'Christian', earnings: [345, -60, -15, -60, -75, -80, -40, -25], total: -10,  weeklyWins: 17, playoff: '1-7' },
+    { name: 'Joe',      earnings: [160, -60, -60, -75, null, null, null, null], total: -35, weeklyWins: 6, playoff: '2-1' },
+    { name: 'Alec',     earnings: [-75, -60, -75, -60, -45, 140, -100, 230], total: -45,  weeklyWins: 9, playoff: '5-6' },
+    { name: 'Brendan',  earnings: [null, null, null, null, -60, -100, null, null], total: -160, weeklyWins: 1, playoff: '—' },
+    { name: 'BP',       earnings: [null, null, null, null, null, null, -100, -75], total: -175, weeklyWins: 1, playoff: '—' },
+    { name: 'Guy',      earnings: [-75, 15, -45, -75, null, null, null, null], total: -180, weeklyWins: 3, playoff: '2-2' },
+    { name: 'Borden',   earnings: [-60, -45, -75, -60, -75, -80, 240, -100], total: -255, weeklyWins: 7, playoff: '3-5' },
+    { name: 'Stock',    earnings: [null, null, null, null, -75, -100, -80, -50], total: -305, weeklyWins: 3, playoff: '0-1' },
+    { name: 'Spencer',  earnings: [-75, -60, -60, -75, -60, -80, -60, 120],  total: -350, weeklyWins: 7, playoff: '2-4' },
+    { name: 'Don',      earnings: [-60, -60, -75, -75, 65, -100, -60, -100], total: -465, weeklyWins: 5, playoff: '2-4' },
+  ];
+
+  const seasonAwards = [
+    { year: 2018, first: 'Christian', second: 'Steve',   third: 'Joe',    bestRecord: 'Joe',    bestVsAll: '—',    survivor: '—'   },
+    { year: 2019, first: 'Zach',      second: 'David',   third: 'Guy',    bestRecord: 'Steve',  bestVsAll: '—',    survivor: '—'   },
+    { year: 2020, first: 'Erik',      second: 'Bailey',  third: 'Steve',  bestRecord: 'Erik',   bestVsAll: '—',    survivor: '—'   },
+    { year: 2021, first: 'Bailey',    second: 'David',   third: 'Zach',   bestRecord: 'Bailey', bestVsAll: '—',    survivor: '—'   },
+    { year: 2022, first: 'Steve',     second: 'Don',     third: 'Zach',   bestRecord: 'Bailey', bestVsAll: '—',    survivor: 'Alec' },
+    { year: 2023, first: 'Steve',     second: 'Bailey',  third: 'Alec',   bestRecord: 'David',  bestVsAll: 'David', survivor: 'Zach' },
+    { year: 2024, first: 'Erik',      second: 'Borden',  third: 'Zach',   bestRecord: 'Borden', bestVsAll: 'Zach',  survivor: 'Zach' },
+    { year: 2025, first: 'Zach',      second: 'Spencer', third: 'Alec',   bestRecord: 'Alec',   bestVsAll: 'Alec',  survivor: '—'   },
+  ];
+
+  const weeklyHighs = {
+    2018: ['Zach','Borden','Christian','Christian','Christian','Christian','Bailey','Joe','Joe','Joe','Joe','Don','Erik','Steve','Steve','Steve',null],
+    2019: ['Zach','David','Borden','Joe','Spencer','Don','Alec','David','Borden','Erik','Steve','Christian','Zach','Zach','Steve','Guy',null],
+    2020: ['Spencer','Christian','Christian','Guy','Guy','Zach','Joe','Erik','Steve','Christian','Zach','Christian','Erik','Erik','Erik','Erik',null],
+    2021: ['Christian','Zach','Steve','David','Steve','Zach','Borden','Steve','Bailey','David','Alec','Bailey','Bailey','Bailey','David','David','Zach'],
+    2022: ['Bailey','Zach','Bailey','Don','Alec','Steve','Zach','Bailey','Erik','Alec','Bailey','Zach','Erik','Zach','Brendan','Spencer','Erik'],
+    2023: ['Alec','David','Alec','Zach','Zach','David','David','David','Christian','Alec','David','David','David','Borden','Erik','Bailey','Spencer'],
+    2024: ['Stock','Don','Don','Erik','Zach','Borden','Borden','Bailey','Christian','Zach','Zach','Spencer','Spencer','Christian','Bailey','Christian','David'],
+    2025: ['Christian','Erik','Bailey','Christian','Stock','Zach','Bailey','Erik','Steve','Stock','Alec','Bailey','Spencer','Christian','Erik','Peters','Alec'],
+  };
+
+  // ---- EARNINGS TABLE ----
+  let sortKey = 'total';
+  let descending = true;
+
+  function fmtMoney(v) {
+    if (v === null || v === undefined) return '<span class="dim">—</span>';
+    const cls = v > 0 ? 'pos' : v < 0 ? 'neg' : 'muted';
+    const sign = v > 0 ? '+' : '';
+    return `<span class="${cls}">${sign}$${Math.abs(v)}</span>`;
+  }
+
+  function buildEarningsTable() {
+    const sorted = [...players].sort((a, b) => {
+      let av, bv;
+      if (sortKey === 'name') {
+        return (descending ? -1 : 1) * a.name.localeCompare(b.name);
+      } else if (sortKey === 'total' || sortKey === 'weeklyWins') {
+        av = a[sortKey]; bv = b[sortKey];
+      } else {
+        const yr = parseInt(sortKey.slice(1));
+        const idx = YEARS.indexOf(yr);
+        av = a.earnings[idx]; bv = b.earnings[idx];
+      }
+      av = av ?? -9999; bv = bv ?? -9999;
+      return descending ? bv - av : av - bv;
+    });
+
+    const colDefs = [
+      { key: 'rank',       label: '#',                 sort: false },
+      { key: 'name',       label: 'Player',            sort: true  },
+      ...YEARS.map(y => ({ key: `y${y}`, label: String(y), sort: true })),
+      { key: 'total',      label: 'Total',             sort: true  },
+      { key: 'weeklyWins', label: 'Weekly Payouts Won',                   sort: true  },
+      { key: 'playoff',    label: "Playoff Record in the Money ('19-)",   sort: false },
+    ];
+
+    let html = '<table><thead><tr>';
+    colDefs.forEach(c => {
+      if (!c.sort) {
+        html += `<th>${c.label}</th>`;
+      } else {
+        let cls = 'sortable';
+        if (sortKey === c.key) cls += descending ? ' sorted-desc' : ' sorted-asc';
+        html += `<th class="${cls}" onclick="resort('${c.key}')">${c.label}</th>`;
+      }
+    });
+    html += '</tr></thead><tbody>';
+
+    const byTotal = [...players].sort((a, b) => b.total - a.total);
+    const trophies = ['🥇','🥈','🥉'];
+
+    sorted.forEach((p, idx) => {
+      const totalRank = byTotal.indexOf(p);
+      const rankDisplay = sortKey === 'total' && descending && totalRank < 3
+        ? trophies[totalRank]
+        : idx + 1;
+
+      const totalCls = 'total-col ' + (p.total > 0 ? 'pos' : p.total < 0 ? 'neg' : 'muted');
+      const totalStr = (p.total > 0 ? '+' : '') + '$' + Math.abs(p.total);
+
+      html += `<tr>
+        <td class="rank-col">${rankDisplay}</td>
+        <td class="name-col">${p.name}</td>
+        ${YEARS.map(y => `<td>${fmtMoney(p.earnings[YEARS.indexOf(y)])}</td>`).join('')}
+        <td class="${totalCls}">${totalStr}</td>
+        <td class="muted">${p.weeklyWins}</td>
+        <td class="muted">${p.playoff}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table>';
+    document.getElementById('earnings-wrap').innerHTML = html;
+  }
+
+  function resort(key) {
+    if (sortKey === key) {
+      descending = !descending;
+    } else {
+      sortKey = key;
+      descending = key !== 'name';
+    }
+    buildEarningsTable();
+  }
+
+  // ---- AWARDS TABLE ----
+  function buildAwardsTable() {
+    const rows = [
+      { key: 'first',      label: '🥇 1st Place'      },
+      { key: 'second',     label: '🥈 2nd Place'      },
+      { key: 'third',      label: '🥉 3rd Place'      },
+      { key: 'bestRecord', label: '📈 Best Record'    },
+      { key: 'bestVsAll',  label: '⚔️ Best Record vs All' },
+      { key: 'survivor',   label: '🎯 Survivor'       },
+    ];
+
+    let html = '<table><thead><tr><th>Award</th>';
+    YEARS.forEach(y => { html += `<th>${y}</th>`; });
+    html += '</tr></thead><tbody>';
+
+    rows.forEach(row => {
+      html += `<tr><td class="award-label">${row.label}</td>`;
+      YEARS.forEach(y => {
+        const entry = seasonAwards.find(r => r.year === y);
+        const val = entry ? entry[row.key] : '—';
+        const empty = !val || val === '—';
+        html += empty
+          ? `<td class="dim">—</td>`
+          : `<td class="award-val">${val}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    document.getElementById('awards-wrap').innerHTML = html;
+  }
+
+  // ---- WEEKLY HIGHS ----
+  function buildWeeklyHighs() {
+    const maxWeeks = Math.max(...YEARS.map(y => weeklyHighs[y].length));
+
+    let html = '<table><thead><tr><th>Week</th>';
+    YEARS.forEach(y => { html += `<th>${y}</th>`; });
+    html += '</tr></thead><tbody>';
+
+    for (let wi = 0; wi < maxWeeks; wi++) {
+      html += `<tr><td class="wk-label">WEEK ${wi + 1}</td>`;
+      YEARS.forEach(y => {
+        const winner = (weeklyHighs[y] || [])[wi];
+        html += winner
+          ? `<td class="wk-winner">${winner}</td>`
+          : `<td class="dim">—</td>`;
+      });
+      html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+    document.getElementById('weekly-wrap').innerHTML = html;
+  }
+
+  // ---- TAB SWITCH ----
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p =>
+      p.classList.toggle('active', p.id === `tab-${name}`));
+  }
+
+  buildEarningsTable();
+  buildAwardsTable();
+  buildWeeklyHighs();
+</script>
+</body>
+</html>
