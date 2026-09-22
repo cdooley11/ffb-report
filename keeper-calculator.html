@@ -134,10 +134,11 @@
     border-radius: 4px;
     white-space: nowrap;
   }
-  .legend-chip.normal    { background: rgba(78,158,68,0.2);  color: #81c784; border: 1px solid rgba(129,199,132,0.3); }
-  .legend-chip.fa        { background: rgba(245,124,0,0.2);  color: #ffb74d; border: 1px solid rgba(255,183,77,0.3); }
-  .legend-chip.round1    { background: rgba(255,152,0,0.2);  color: #ffcc02; border: 1px solid rgba(255,204,2,0.4); }
-  .legend-chip.franchise { background: rgba(240,192,48,0.15); color: var(--gold); border: 1px solid rgba(240,192,48,0.4); }
+  .legend-chip.normal     { background: rgba(78,158,68,0.2);   color: #81c784; border: 1px solid rgba(129,199,132,0.3); }
+  .legend-chip.fa         { background: rgba(245,124,0,0.2);   color: #ffb74d; border: 1px solid rgba(255,183,77,0.3); }
+  .legend-chip.round1     { background: rgba(255,152,0,0.2);   color: #ffcc02; border: 1px solid rgba(255,204,2,0.4); }
+  .legend-chip.franchise  { background: rgba(240,192,48,0.15); color: var(--gold); border: 1px solid rgba(240,192,48,0.4); }
+  .legend-chip.transition { background: rgba(155,89,182,0.2);  color: #c39bd3; border: 1px solid rgba(195,155,211,0.4); }
 
   /* ---- CONTROLS ---- */
   .team-selector {
@@ -226,10 +227,11 @@
     grid-row: 1 / 3;
     align-self: center;
   }
-  .keeper-cost.normal    { background: rgba(78,158,68,0.2);  color: #81c784; border: 1px solid rgba(129,199,132,0.3); }
-  .keeper-cost.fa        { background: rgba(245,124,0,0.2);  color: #ffb74d; border: 1px solid rgba(255,183,77,0.3); }
-  .keeper-cost.round1    { background: rgba(255,152,0,0.2);  color: #ffcc02; border: 1px solid rgba(255,204,2,0.4); }
-  .keeper-cost.franchise { background: rgba(240,192,48,0.15); color: var(--gold); border: 1px solid rgba(240,192,48,0.4); }
+  .keeper-cost.normal     { background: rgba(78,158,68,0.2);   color: #81c784; border: 1px solid rgba(129,199,132,0.3); }
+  .keeper-cost.fa         { background: rgba(245,124,0,0.2);   color: #ffb74d; border: 1px solid rgba(255,183,77,0.3); }
+  .keeper-cost.round1     { background: rgba(255,152,0,0.2);   color: #ffcc02; border: 1px solid rgba(255,204,2,0.4); }
+  .keeper-cost.franchise  { background: rgba(240,192,48,0.15); color: var(--gold); border: 1px solid rgba(240,192,48,0.4); }
+  .keeper-cost.transition { background: rgba(155,89,182,0.2);  color: #c39bd3; border: 1px solid rgba(195,155,211,0.4); }
   .keeper-player-meta { display: flex; gap: 0.3rem; flex-wrap: wrap; grid-column: 1; }
   .keeper-badge { padding: 1px 6px; border-radius: 10px; font-size: 0.67rem; font-weight: 600; }
   .keeper-badge.pos { background: rgba(41,128,185,0.2); border: 1px solid rgba(41,128,185,0.4); color: #7ec8e3; }
@@ -243,15 +245,15 @@
   <div class="site-nav-links">
     <a href="index.html">Home</a>
     <a href="CommishNote.html">Commish Note</a>
-    <a href="dashboard.html">Transactions</a>
     <a href="Fantasy-Football-Keeper-Rules.html">Keeper Rules</a>
-    <a href="keeper-calculator.html" class="active">Keeper Calc</a>
+    <a href="keeper-calculator.html" class="active">2027 Keeper Calculator</a>
+    <a href="dashboard.html">Current Roster</a>
   </div>
 </nav>
 
 <div class="container">
   <header>
-    <h1>🧮 2026 Keeper Calculator</h1>
+    <h1>🧮 Keeper Calculator</h1>
     <p class="subtitle">Live roster data — see what round each player costs to keep next year</p>
   </header>
 
@@ -260,6 +262,7 @@
     <span class="legend-chip normal">Round X — drafted/traded progression (n−1)</span>
     <span class="legend-chip fa">Round 7 (FA) — free agent or different-team pickup</span>
     <span class="legend-chip round1">Round 1 ⚠️ — last year as a regular keeper</span>
+    <span class="legend-chip transition">Franchise / Round 1 — transition year (drafted Rd 12–13)</span>
     <span class="legend-chip franchise">🔒 Franchise Only — must be kept at bottom of draft</span>
   </div>
 
@@ -352,17 +355,18 @@
 
     if (draftRound !== null) {
       // Regular draft progression: next year's keeper round = draftRound - 1
-      return { keeperRound: draftRound - 1, isFa: false };
+      return { keeperRound: draftRound - 1, isFa: false, draftRound };
     }
     // FA rule: keeper round is always 7 (regardless of any prior draft round on a different team)
-    return { keeperRound: 7, isFa: true };
+    return { keeperRound: 7, isFa: true, draftRound: null };
   }
 
-  function keeperLabel(keeperRound, isFa) {
-    if (keeperRound <= 0) return { text: '🔒 Franchise Only', cls: 'franchise' };
-    if (keeperRound === 1) return { text: 'Round 1 ⚠️',       cls: 'round1'    };
-    if (isFa)             return { text: `Round ${keeperRound} (FA)`, cls: 'fa' };
-    return                       { text: `Round ${keeperRound}`,      cls: 'normal' };
+  function keeperLabel(keeperRound, isFa, draftRound) {
+    if (keeperRound <= 0)   return { text: '🔒 Franchise Only',     cls: 'franchise'  };
+    if (keeperRound === 1)  return { text: 'Round 1 ⚠️',            cls: 'round1'     };
+    if (isFa)               return { text: `Round ${keeperRound} (FA)`, cls: 'fa'     };
+    if (draftRound >= 12)   return { text: 'Franchise / Round 1',   cls: 'transition' };
+    return                         { text: `Round ${keeperRound}`,  cls: 'normal'     };
   }
 
   async function init() {
@@ -451,20 +455,20 @@
 
       // Sort players: franchise first, then by round ascending
       const sorted = players.map(pid => {
-        const { keeperRound, isFa } = computeKeeperInfo(pid);
-        return { pid, keeperRound, isFa };
+        const { keeperRound, isFa, draftRound } = computeKeeperInfo(pid);
+        return { pid, keeperRound, isFa, draftRound };
       }).sort((a, b) => {
         if (a.keeperRound <= 0 && b.keeperRound > 0) return -1;
         if (b.keeperRound <= 0 && a.keeperRound > 0) return  1;
         return a.keeperRound - b.keeperRound;
       });
 
-      sorted.forEach(({ pid, keeperRound, isFa }) => {
+      sorted.forEach(({ pid, keeperRound, isFa, draftRound }) => {
         const p = playersDB[pid] || {};
         const pName   = p.full_name || (`${p.first_name || ''} ${p.last_name || ''}`).trim() || `ID ${pid}`;
         const pos     = p.position || '?';
         const nflTeam = p.team || 'FA';
-        const { text, cls } = keeperLabel(keeperRound, isFa);
+        const { text, cls } = keeperLabel(keeperRound, isFa, draftRound);
 
         const card = document.createElement('div');
         card.className   = 'keeper-card' + (idx === 0 ? ' active' : '');
