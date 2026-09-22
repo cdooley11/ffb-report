@@ -250,6 +250,8 @@
   <div id="tab-earnings" class="tab-panel active">
     <p class="section-note">Net earnings after entry fees · Default sort: all-time total · Click any column header to re-sort</p>
     <div class="table-wrap" id="earnings-wrap"></div>
+    <p class="section-note" style="margin-top:1.5rem;font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(192,200,208,0.5)">Ex-Leaguemates</p>
+    <div class="table-wrap" id="earnings-wrap-ex"></div>
   </div>
 
   <!-- AWARDS TAB -->
@@ -309,6 +311,8 @@
   };
 
   // ---- EARNINGS TABLE ----
+  const EX_LEAGUERS = new Set(['Joe', 'Brendan', 'BP', 'Guy']);
+
   let sortKey = 'total';
   let descending = true;
 
@@ -319,8 +323,8 @@
     return `<span class="${cls}">${sign}$${Math.abs(v)}</span>`;
   }
 
-  function buildEarningsTable() {
-    const sorted = [...players].sort((a, b) => {
+  function sortPlayers(list) {
+    return [...list].sort((a, b) => {
       let av, bv;
       if (sortKey === 'name') {
         return (descending ? -1 : 1) * a.name.localeCompare(b.name);
@@ -334,12 +338,14 @@
       av = av ?? -9999; bv = bv ?? -9999;
       return descending ? bv - av : av - bv;
     });
+  }
 
+  function buildTable(list, rankPool) {
     const colDefs = [
-      { key: 'rank',       label: '#',                 sort: false },
-      { key: 'name',       label: 'Player',            sort: true  },
-      ...YEARS.map(y => ({ key: `y${y}`, label: String(y), sort: true })),
-      { key: 'total',      label: 'Total',             sort: true  },
+      { key: 'rank',       label: '#',                                    sort: false },
+      { key: 'name',       label: 'Player',                               sort: true  },
+      ...YEARS.map(y => ({ key: `y${y}`, label: String(y),               sort: true  })),
+      { key: 'total',      label: 'Total',                                sort: true  },
       { key: 'weeklyWins', label: 'Weekly Payouts Won',                   sort: true  },
       { key: 'playoff',    label: "Playoff Record in the Money ('19-)",   sort: false },
     ];
@@ -356,10 +362,10 @@
     });
     html += '</tr></thead><tbody>';
 
-    const byTotal = [...players].sort((a, b) => b.total - a.total);
+    const byTotal = [...rankPool].sort((a, b) => b.total - a.total);
     const trophies = ['🥇','🥈','🥉'];
 
-    sorted.forEach((p, idx) => {
+    list.forEach((p, idx) => {
       const totalRank = byTotal.indexOf(p);
       const rankDisplay = sortKey === 'total' && descending && totalRank < 3
         ? trophies[totalRank]
@@ -378,8 +384,14 @@
       </tr>`;
     });
 
-    html += '</tbody></table>';
-    document.getElementById('earnings-wrap').innerHTML = html;
+    return html + '</tbody></table>';
+  }
+
+  function buildEarningsTable() {
+    const active = players.filter(p => !EX_LEAGUERS.has(p.name));
+    const ex     = players.filter(p =>  EX_LEAGUERS.has(p.name));
+    document.getElementById('earnings-wrap').innerHTML    = buildTable(sortPlayers(active), active);
+    document.getElementById('earnings-wrap-ex').innerHTML = buildTable(sortPlayers(ex), ex);
   }
 
   function resort(key) {
